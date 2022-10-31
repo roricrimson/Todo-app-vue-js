@@ -1,50 +1,45 @@
-<script>
-export default {
-  data() {
-    return {
-      value: "",
-      todoList: JSON.parse(localStorage.getItem("todolist")) ?? [],
-    };
-  },
+<script setup>
+import { computed, onMounted, ref } from "vue";
 
-  methods: {
-    addToList() {
-      if (this.value !== "") {
-        this.todoList.push({
-          id: Date.now(),
-          item: this.value,
-          checked: false,
-        });
-        this.value = "";
-      }
-      this.addToLocalStorage();
-    },
-    changeCheck(id) {
-      this.todoList.forEach((el, index) => {
-        if (el.id === id) {
-          el = {
-            id: id,
-            item: el.item,
-            checked: !el.checked,
-          };
-          this.todoList[index] = el;
-        }
-      });
-      this.addToLocalStorage();
-    },
-    removeItem(id) {
-      this.todoList = this.todoList.filter((i) => i.id !== id);
-      this.addToLocalStorage();
-    },
-    addToLocalStorage() {
-      localStorage.setItem("todolist", JSON.stringify(this.todoList));
-    },
-  },
-  computed: {},
-  created() {},
-  mounted() {},
-  // ...
-};
+const value = ref("");
+const todoList = ref(JSON.parse(localStorage.getItem("todolist")) ?? []);
+
+function addToList() {
+  if (value.value !== "") {
+    todoList.value.push({
+      id: Date.now(),
+      item: value.value,
+      checked: false,
+    });
+    value.value = "";
+  }
+  addToLocalStorage();
+}
+
+function changeCheck(id) {
+  todoList.value.forEach((el, index) => {
+    if (el.id === id) {
+      el = {
+        id: id,
+        item: el.item,
+        checked: !el.checked,
+      };
+      todoList.value[index] = el;
+    }
+  });
+  addToLocalStorage();
+}
+function removeItem(id) {
+  todoList.value = todoList.value.filter((i) => i.id !== id);
+  addToLocalStorage();
+}
+function addToLocalStorage() {
+  localStorage.setItem("todolist", JSON.stringify(todoList.value));
+}
+
+onMounted(() => {
+  console.log("mounted");
+});
 </script>
 
 <template>
